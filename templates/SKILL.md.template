@@ -35,3 +35,12 @@ One sentence on what the skill does.
 
 Constraints, examples, or references. For long material, put it in `references/` and
 link it from here: Claude will load it only when needed.
+
+## Trigger examples
+
+<!-- Optional but recommended. They document intent and feed the Workflow E collision
+check; they do NOT guarantee the skill fires at runtime. Remove this section if unused. -->
+
+- Should trigger: "<a prompt that must activate this skill>"
+- Should trigger: "<another phrasing>"
+- Should NOT trigger: "<a near-miss that belongs to a different skill>"

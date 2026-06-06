@@ -1,6 +1,6 @@
 ---
 # REQUIRED.
-# name: file name = <name>.md. Lowercase, numbers, hyphens only (e.g. code-reviewer).
+# name: file name = <name>.md. Lowercase, numbers, hyphens only, max 64 chars (e.g. code-reviewer).
 name: agent-name
 # description: what the subagent does and WHEN to use it. Action-oriented phrasing
 #   ("Use proactively to...", "Use right after...") encourages automatic delegation
@@ -29,3 +29,12 @@ You are a <role> specialized in <domain>.
 ## Output
 
 How the response you return to the main agent should be structured.
+
+## Trigger examples
+
+<!-- Optional but recommended. They document when the main agent should delegate here and
+feed the Workflow F description check; not a runtime guarantee. Remove this section if unused. -->
+
+- Should delegate here: "<a request this agent should handle>"
+- Should delegate here: "<another phrasing, or a proactive trigger>"
+- Should NOT (belongs elsewhere): "<a request a sibling agent owns>"

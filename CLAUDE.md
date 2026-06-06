@@ -50,8 +50,9 @@ Goal: the local Claude install ends up carrying this repo's automation / managem
 organization / ingestion knowledge and its skills & agents, cleanly merged with what
 was already local — so local works on its own, without the repo.
 
-0. **Snapshot first (reversibility).** Before writing anything to `~/.claude`, copy
-   the files you are about to touch into a timestamped backup folder
+0. **Snapshot first (reversibility).** Before writing anything to `~/.claude`, copy the
+   step-2 target paths that already exist locally (`~/.claude/CLAUDE.md`, `GUIDELINES.md`,
+   `skills/`, `agents/`, `templates/`) into a timestamped backup folder
    (`~/.claude/.backups/<timestamp>/`) and tell the user the one-line restore command.
    Never write to `~/.claude` without a snapshot.
 1. **Inventory** what this repo provides — the workflows (this `CLAUDE.md`), the
@@ -67,31 +68,35 @@ was already local — so local works on its own, without the repo.
    - the templates the workflows rely on → `~/.claude/templates/`.
    For the two prose-memory files (`~/.claude/CLAUDE.md` and `~/.claude/GUIDELINES.md`),
    write the repo-sourced content **inside stable managed-block markers**
-   (`<!-- claude-markdowns:managed start -->` … `<!-- claude-markdowns:managed end -->`),
+   (`<!-- clautode:managed start -->` … `<!-- clautode:managed end -->`),
    never replacing the whole file. On a repeat run: if the markers exist, replace only
    the text between them; otherwise append a fresh block at the end — and always leave
    the user's own text outside the markers untouched. If the user appears to have
-   hand-edited content inside a block, treat it as a conflict and confirm (Workflow D
-   stance) before overwriting.
+   hand-edited content inside a block, treat it as a conflict — show the differing block
+   and confirm before overwriting.
 3. **Merge, don't clobber.** Where a unit already exists locally and differs,
    reconcile by *behavior* using Workflow **D** (duplicates), **E** (skill
    specialization), **F** (agent disambiguation). Confirm conflicts with the user.
-4. **Keep local-only items (the firewall).** *Repo-origin* = files tracked in this
-   cloned repo; everything else in `~/.claude` is local-only and read-only to the
-   merge. On any name collision, **never overwrite blindly**: if the local unit is
-   *not* repo-origin (hand-made), stop and run Workflow **D** (ask the user) before
-   touching it; if it is repo-origin from a prior alignment, reconcile via D/E/F. A
-   unit this repo would install but that is **absent** locally is treated as an
-   intentional deletion — ask before reinstalling, never auto-restore.
+   Run each unit through the **Validation gate** (`GUIDELINES.md`) before writing it
+   into `~/.claude`.
+4. **Keep local-only items (the firewall).** Everything in `~/.claude` that this repo
+   does **not** track (no same-named skill, agent, or template) is **local-only** and
+   read-only to the merge — never touch it. On any name collision between a repo item
+   and a local one, **never overwrite blindly**: if the two are behaviorally equivalent,
+   treat it as *already aligned*; otherwise present them side by side and let the user
+   decide (Workflow **D**). The two prose-memory files are governed by the managed-block
+   rule in step 2, not this firewall. On a **repeat** alignment (evidenced by a prior
+   snapshot in `~/.claude/.backups/` or existing managed blocks), an item this repo would
+   install but that is now **absent** locally is treated as an intentional deletion —
+   ask before reinstalling, never auto-restore. On a **first** alignment, absent simply
+   means not-yet-installed: include it in the step-1 install plan.
 5. **Converge & report.** Local now mirrors the repo's structure and carries its
    automation; report what was installed, merged, and skipped, and where the snapshot
    backup was written. The repo can then be set aside until the next update.
 
-**Re-running `merge` is idempotent.** On a repeat run, compare repo vs local by
-*behavior* (as D/E/F do): a repo unit already present and behaviorally equivalent is
-reported as *already aligned* and not re-litigated. Together with the snapshot, the
-managed blocks, and the firewall above, a second `merge` converges quietly and
-respects intentional local deletions.
+**Re-running `merge` is idempotent**: a repo item already present and behaviorally
+equivalent is reported as *already aligned* and not re-litigated; intentional local
+deletions are respected (step 4).
 
 Workflows D/E/F are the **merge mechanism** this protocol invokes.
 
@@ -113,7 +118,7 @@ The generated artifacts are the files under [`skills/`](skills/) and
 ## Repository map
 
 ```
-claude-markdowns/
+clautode/
 ├── CLAUDE.md          # this file — project map + workflows (auto-loaded by Claude Code)
 ├── GUIDELINES.md      # user preferences = single source of truth for style
 ├── README.md          # human-facing overview; points back here
@@ -128,8 +133,9 @@ claude-markdowns/
 │   └── agents/        #   draft agents awaiting ingestion
 ├── skills/            # one folder per skill (+ README.md catalog)
 ├── agents/            # one .md per subagent (+ README.md catalog)
-└── projects/          # documented projects — second-brain subsystem (Workflows H, I)
-    └── <name>/        #   index.md · _guidelines.md · inbox/ · notes/ · _archive/
+├── projects/          # documented projects — second-brain subsystem (Workflows H, I)
+│   └── <name>/        #   index.md · _guidelines.md · inbox/ · notes/ · _archive/
+└── dashboard/         # OPTIONAL local viewer/editor — outside the workflows, not transferred to local
 ```
 
 ## Workflow A — Create a new skill or agent
@@ -211,7 +217,8 @@ stay** — the general one just points to the specific one.
 When a new skill **A** is added (or whenever overlap is noticed):
 
 1. **Classify A** by category/subcategory and find existing skills in the same
-   area.
+   area. Compare A's trigger examples against theirs to surface prompts that would
+   fire more than one skill.
 2. **Find the less-specific skill B** that A specializes — i.e. A covers a subset
    that B currently also handles in a more generic way.
 3. **Refactor B:**
@@ -246,7 +253,9 @@ When a new agent **A** overlaps a more general agent **B**:
      "…; for <specific case>, the `A` agent is preferred."
    - In **A**, tighten the scope so it clearly owns the specific case.
 3. **Cascade across descriptions.** Re-check sibling agents so every `description`
-   routes unambiguously and no two compete for the same task.
+   routes unambiguously and no two compete for the same task. Use the agents' trigger
+   examples as test prompts: if one example would route to two agents, tighten the
+   descriptions.
 4. Unlike skills, agents update **broadly** (as in Workflow B): adjust all affected
    agents in one pass, then report the new routing boundaries.
 
@@ -273,9 +282,9 @@ When asked to ingest:
 4. **Resolve conflicts with the user.** If a draft collides with, duplicates, or
    specializes an existing unit, present the situation and the proposed resolution
    and **confirm before writing**. Never silently overwrite.
-5. **Commit to the standard locations.** Write the finalized files to
-   `skills/<name>/SKILL.md` / `agents/<name>.md`, and update the relevant catalog
-   `README.md`.
+5. **Commit to the standard locations.** Run each unit through the **Validation gate**
+   (`GUIDELINES.md`) first, then write the finalized files to `skills/<name>/SKILL.md` /
+   `agents/<name>.md`, and update the relevant catalog `README.md`.
 6. **Clean up the inbox.** Once a draft has been correctly placed (and only then),
    **delete its source file(s) from `inbox/`**. Leave `inbox/skills/` and
    `inbox/agents/` (with their `.gitkeep`) in place.

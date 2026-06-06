@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🏭 claude-markdowns
+# 🏭 Clautode
 
 **A personal factory for [Claude Code](https://code.claude.com/docs) skills & subagents.**
 
@@ -21,7 +21,7 @@ subagents and style preferences here in plain Markdown; Claude Code reads them a
 **aligns your local install** (`~/.claude`) to match.
 
 ```bash
-git clone <this-repo> && cd claude-markdowns
+git clone <this-repo> && cd clautode
 claude          # open Claude Code in the repo
 > merge         # Claude reads CLAUDE.md and aligns your local install from this repo
 ```
@@ -67,7 +67,7 @@ merging, keeping catalogs in sync — Claude handles by following `CLAUDE.md`.
 
 | | Workflow | What it does |
 |---|----------|--------------|
-| **A** | Create | Start from a template, apply the guidelines, register in the catalog. |
+| **A** | Create | Start from a template, apply the guidelines, register in the catalog, then run the hierarchy/disambiguation pass (E/F). |
 | **B** | Update preferences | Record the new preference, then propagate it across agents & skills. |
 | **C** | Update a unit | Re-apply current guidelines to an existing skill or agent. |
 | **D** | Merge units | The merge mechanism used during alignment — reconcile two units that do nearly the same thing (a repo unit vs a diverging local one, or two on the same side): detect overlaps by behavior and **merge collaboratively**, no blind copying. |
@@ -86,7 +86,8 @@ merging, keeping catalogs in sync — Claude handles by following `CLAUDE.md`.
 The intended way is always to **ask Claude Code**, which follows [`CLAUDE.md`](CLAUDE.md).
 Two paths to add a unit:
 
-- **By hand** — create it directly under `skills/` or `agents/` (Workflow A).
+- **By hand** — create it directly under [`skills/`](skills/) or [`agents/`](agents/)
+  (Workflow A). Each folder's `README.md` is the live catalog and links the relevant template.
 - **Via the inbox** — drop a draft or some docs in [`inbox/`](inbox/), then ask Claude to
   *ingest the inbox*: it normalizes the draft, integrates it into the hierarchy (Workflows
   D/E/F), checks conflicts with you, writes the file to the right place, and clears the
@@ -111,7 +112,7 @@ Claude your new preference) — it records the change and propagates it (Workflo
 ## 🗂️ Repository layout
 
 ```
-claude-markdowns/
+clautode/
 ├── CLAUDE.md                # central guide for Claude Code (auto-loaded)
 ├── GUIDELINES.md            # your preferences = single source of truth for style
 │
@@ -122,7 +123,7 @@ claude-markdowns/
 │       ├── scripts/         # support scripts (optional)
 │       └── references/      # material loaded on demand (optional)
 │
-├── agents/                  # one .md file per subagent (Claude Code format)
+├── agents/                  # one .md file per subagent
 │   ├── README.md            # subagents catalog
 │   └── code-reviewer.md     # working example
 │
@@ -143,6 +144,10 @@ claude-markdowns/
 
 # Plus .claude/commands/merge.md — the `merge` slash command (alignment trigger).
 ```
+
+Each folder carries its own `README.md` with the section's mechanics and usage:
+[`skills/`](skills/README.md) · [`agents/`](agents/README.md) · [`inbox/`](inbox/README.md) ·
+[`projects/`](projects/README.md) · [`dashboard/`](dashboard/README.md).
 
 > [!NOTE]
 > The `skills/` and `agents/` folders deliberately mirror the ones Claude Code expects in
@@ -186,8 +191,8 @@ done
 ```bash
 # from your project's folder
 mkdir -p .claude/skills .claude/agents
-cp -r /path/to/claude-markdowns/skills/commit-helper .claude/skills/
-cp    /path/to/claude-markdowns/agents/code-reviewer.md .claude/agents/
+cp -r /path/to/clautode/skills/commit-helper .claude/skills/
+cp    /path/to/clautode/agents/code-reviewer.md .claude/agents/
 ```
 
 To remove a link/copy, delete it from the destination (e.g. `rm ~/.claude/skills/commit-helper`).
@@ -210,6 +215,7 @@ A separate subsystem under [`projects/`](projects/) turns raw docs into organize
 
 Each project's `_guidelines.md` controls how its notes are structured and is editable per
 project — distinct from the repo-wide `GUIDELINES.md`, which governs only skills and agents.
+See [`projects/README.md`](projects/README.md) for the per-project layout.
 
 </details>
 
@@ -227,7 +233,7 @@ python3 -m http.server 8000
 # then open http://localhost:8000/dashboard/
 ```
 
-See [`dashboard/`](dashboard/) for full details.
+See [`dashboard/README.md`](dashboard/README.md) for full details.
 
 </details>
 
@@ -236,3 +242,4 @@ See [`dashboard/`](dashboard/) for full details.
 <div align="center">
 <sub>A personal repo, public so others can use it freely · built for Claude Code, maintained with Claude</sub>
 </div>
+

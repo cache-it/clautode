@@ -41,3 +41,9 @@ feat(auth): add JWT token refresh
 The client now automatically renews the token on expiry,
 avoiding forced logout during long sessions.
 ```
+
+## Trigger examples
+
+- Should trigger: "commit this", "write a commit message", "stage and commit".
+- Should trigger: "I've staged my changes — what's a good message?"
+- Should NOT trigger: "explain what Conventional Commits are" (a question, not a request to commit).

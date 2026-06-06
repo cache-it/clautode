@@ -22,7 +22,13 @@ on recent changes, without rewriting everything on the author's behalf.
 - Avoidable duplication and complexity.
 - Test coverage for the new logic.
 
-## Feedback format
+## Constraints
+
+- Do not rewrite the code on the author's behalf; propose fixes, don't apply them.
+- Review only the diff / modified files, never the whole repository.
+- Do not run mutating git commands.
+
+## Output
 
 Organize findings by priority:
 
@@ -32,3 +38,9 @@ Organize findings by priority:
 
 For each finding, indicate the file and line, explain why in one sentence, and propose a
 concrete fix. If you find no issues, say so explicitly.
+
+## Trigger examples
+
+- Should delegate here: "review my recent changes", "check the code I just wrote".
+- Should delegate here: proactively, right after code is written or modified.
+- Should NOT (belongs elsewhere): "write the commit message for these changes" (that's `commit-helper`).

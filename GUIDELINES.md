@@ -25,6 +25,9 @@ date as my preferences evolve (Workflow B in `CLAUDE.md`).
   keywords that trigger activation/delegation.
 - Never hardcode secrets or tokens.
 - Keep the relevant `README.md` catalog updated whenever a unit is added or removed.
+- Give each unit a few **trigger examples** — 2–3 prompts that *should* activate it and
+  1–2 that should *not*. They document intent and feed the overlap/collision checks in
+  Workflows E/F; they are not a guarantee the unit will fire at runtime.
 
 ## Skills
 
@@ -37,7 +40,8 @@ date as my preferences evolve (Workflow B in `CLAUDE.md`).
   time, instead of describing it in prose.
 - Default invocation: both automatic and manual (`/name`). Set
   `disable-model-invocation: true` only when the skill should never auto-trigger.
-- Standard body sections: `## When to use it`, `## Procedure`, `## Notes`.
+- Typical body sections (adapt as needed): `## When to use it`, `## Procedure`, then
+  any of `## Notes` / `## Example` / domain-specific sections.
 - Always end with a concrete example when it aids clarity.
 - **Specialization hierarchy.** Skills form a tree of categories/subcategories.
   When a more specific skill exists, a more general one must not duplicate it:
@@ -54,8 +58,9 @@ date as my preferences evolve (Workflow B in `CLAUDE.md`).
 - `description`: action-oriented ("Use proactively...", "Use right after...") to
   encourage automatic delegation. Intelligently synthesized — concise, no filler,
   while keeping the delegation triggers.
-- Standard system-prompt sections: `## When you are invoked`, `## What to check` /
-  task steps, `## Constraints`, `## Output`.
+- Typical system-prompt sections (adapt as needed): `## When you are invoked` (with
+  task steps), `## Constraints`, `## Output`; add a `## What to check` heading when the
+  checks warrant it (see the `code-reviewer` example).
 - The agent should **not** do more than its remit — define explicit constraints
   for what it must NOT do.
 - Output: structured and prioritized; tell the agent exactly how to format what it
@@ -65,6 +70,43 @@ date as my preferences evolve (Workflow B in `CLAUDE.md`).
   scope boundary in the `description` fields (B defers to A for the specific case;
   A owns it) — never a body pointer. Same job → merge instead. (See `CLAUDE.md`
   Workflow F; contrast with the skill hierarchy in Workflow E.)
+
+## Anti-patterns (do not author)
+
+Failure modes worth naming explicitly. Each pair is **BAD → GOOD**; cases already
+ruled out elsewhere are cross-referenced, not repeated.
+
+- **Vague description.** BAD: "helps with git." → GOOD: "Writes Conventional Commits
+  from staged changes; use when the user asks to commit or mentions staged changes."
+- **Catch-all unit.** BAD: one `dev-helper` skill that commits, reviews, and releases.
+  → GOOD: several single-responsibility units, one job each.
+- **Competing descriptions.** BAD: two units whose descriptions both claim to "review
+  code." → GOOD: one narrows its scope and defers to the other (skills: a Workflow E
+  pointer; agents: a description boundary, Workflow F).
+- **Over-broad agent tools.** BAD: granting an agent all tools "to be safe." → GOOD:
+  list only the tools it actually needs (least privilege).
+- Other failure modes are owned elsewhere — secrets, near-duplicates, agent
+  body-pointers, remit-creep: see **Cross-cutting**, **Agents**, and Workflows D/E/F.
+
+## Validation gate
+
+Before writing a unit to a risky destination — ingesting from `inbox/` (Workflow G) or
+merging into `~/.claude` (Alignment protocol) — check it against this gate. Each item
+**references** its authority instead of restating it, so the gate never drifts.
+
+Every unit:
+- `name` matches the regex/length in the relevant template and equals the file/folder name.
+- Frontmatter uses only the keys listed in that template.
+- `description` follows **Skills**/**Agents** above and trips none of the **Anti-patterns**.
+- No hardcoded secrets (`CLAUDE.md` Rules of engagement).
+- Exactly one catalog row in the folder's `README.md`, linking to the file.
+- Trigger examples present, or deliberately omitted.
+
+Skills also: body within ~40 lines (or detail moved to `references/`); uses the typical sections or a sensible adaptation.
+Agents also: tools are least-privilege; `model` defaults to `sonnet` unless justified.
+
+Mandatory at the risky boundaries (Workflow G, alignment); a light self-check elsewhere —
+not closing ceremony on every hand edit.
 
 ## Notes on changing these preferences
 
