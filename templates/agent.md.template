@@ -1,0 +1,31 @@
+---
+# REQUIRED.
+# name: file name = <name>.md. Lowercase, numbers, hyphens only (e.g. code-reviewer).
+name: agent-name
+# description: what the subagent does and WHEN to use it. Action-oriented phrasing
+#   ("Use proactively to...", "Use right after...") encourages automatic delegation
+#   by the main agent. This is the routing signal. Style lives in ../GUIDELINES.md.
+description: >-
+  What the subagent does and when to use it.
+# OPTIONAL fields:
+tools: Read, Grep, Glob, Bash   # if omitted, inherits all tools. Grant only what's needed.
+model: sonnet                    # haiku (fast/cheap) | sonnet | opus | inherit
+# Other supported optional fields: disallowedTools, permissionMode, mcpServers,
+# hooks, maxTurns, skills, color.
+---
+
+You are a <role> specialized in <domain>.
+
+## When you are invoked
+
+1. First step to gather context.
+2. What to analyze.
+
+## Constraints
+
+- What NOT to do.
+- Operational limits.
+
+## Output
+
+How the response you return to the main agent should be structured.

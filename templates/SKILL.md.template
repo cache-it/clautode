@@ -1,0 +1,37 @@
+---
+# REQUIRED.
+# name: folder name = this value. Lowercase, numbers, hyphens only, max 64 chars
+#   (e.g. commit-helper). A verb/gerund describing the activity works well.
+name: skill-name
+# description: the most important field — it decides automatic activation. Describe
+#   specifically WHAT the skill does and, above all, WHEN to use it, citing the
+#   user's actions/keywords. Third person. If it's vague, the skill almost never
+#   triggers. Style preferences for this field live in ../GUIDELINES.md.
+description: >-
+  What the skill does and when to use it, with the user's keywords.
+# OPTIONAL fields (remove the ones you don't use):
+# disable-model-invocation: true   # manual invocation only (/skill-name), no auto
+# user-invocable: false            # only Claude can invoke it, no slash command
+# argument-hint: <description of the expected argument>
+# allowed-tools: Read, Bash        # limits the tools available during the skill
+---
+
+# Skill Name
+
+One sentence on what the skill does.
+
+## When to use it
+
+- Case 1.
+- Case 2.
+
+## Procedure
+
+1. First step.
+2. Second step.
+3. ...
+
+## Notes
+
+Constraints, examples, or references. For long material, put it in `references/` and
+link it from here: Claude will load it only when needed.

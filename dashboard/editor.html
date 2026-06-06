@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>claude-markdowns · Editor</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>🏭 claude-markdowns <span class="muted">dashboard</span></h1>
+    <div class="topbar-actions">
+      <span id="fsStatus" class="badge badge-off">repo: not open</span>
+      <button id="connectBtn" title="Pick the repo folder — powers both pages and saving">Open repo folder</button>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <a class="tab" href="index.html">Dashboard</a>
+    <a class="tab active" href="editor.html">Editor</a>
+  </nav>
+
+  <main>
+    <section class="layout-editor">
+      <section class="panel tree-panel">
+        <div class="panel-head">
+          <h2>Repository tree</h2>
+          <div class="panel-head-actions">
+            <button id="treeRefresh" title="Rebuild from the open repo folder">Refresh</button>
+          </div>
+        </div>
+        <div id="treeFilters" class="filters"></div>
+        <div id="tree" class="tree">
+          <p class="hint">Open the repo folder, then click a <strong>.md</strong> file to edit it.</p>
+        </div>
+      </section>
+
+      <section class="panel editor-panel">
+        <div class="panel-head">
+          <h2>Editor <span id="edName" class="muted">— select a .md file</span></h2>
+          <div class="panel-head-actions">
+            <button id="edReload" disabled title="Discard changes and reload from disk">Reload</button>
+            <button id="edSave" class="primary" disabled title="Write changes back to the file">Save</button>
+          </div>
+        </div>
+        <div class="editor-body">
+          <textarea id="edText" spellcheck="false" placeholder="Open a .md file from the tree to edit it here." disabled></textarea>
+          <p id="edNote" class="hint"></p>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script src="common.js"></script>
+  <script src="editor.js"></script>
+</body>
+</html>

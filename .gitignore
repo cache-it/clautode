@@ -1,0 +1,6 @@
+# OS / editor noise
+.DS_Store
+.idea/
+
+# Claude Code local, machine-specific settings (keep .claude/commands/ tracked)
+.claude/settings.local.json

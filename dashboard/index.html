@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>claude-markdowns · Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>🏭 claude-markdowns <span class="muted">dashboard</span></h1>
+    <div class="topbar-actions">
+      <span id="fsStatus" class="badge badge-off">repo: not open</span>
+      <button id="connectBtn" title="Pick the repo folder — powers both pages and saving">Open repo folder</button>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <a class="tab active" href="index.html">Dashboard</a>
+    <a class="tab" href="editor.html">Editor</a>
+  </nav>
+
+  <main>
+    <section class="layout-dash">
+      <section class="panel">
+        <div class="panel-head">
+          <h2>CLAUDE.md</h2>
+          <div class="panel-head-actions">
+            <button id="reloadBtn" title="Reload CLAUDE.md from the open folder">Reload</button>
+          </div>
+        </div>
+        <div id="claudeView" class="markdown">
+          <p class="hint">Open the repo folder to load its <code>CLAUDE.md</code>.</p>
+        </div>
+      </section>
+
+      <aside class="panel">
+        <div class="panel-head"><h2>Analytics</h2></div>
+        <div id="analytics" class="analytics">
+          <p class="hint">Open the repo folder to compute analytics.</p>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <script src="common.js"></script>
+  <script src="dashboard.js"></script>
+</body>
+</html>
