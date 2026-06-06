@@ -50,9 +50,14 @@ Goal: the local Claude install ends up carrying this repo's automation / managem
 organization / ingestion knowledge and its skills & agents, cleanly merged with what
 was already local — so local works on its own, without the repo.
 
+0. **Snapshot first (reversibility).** Before writing anything to `~/.claude`, copy
+   the files you are about to touch into a timestamped backup folder
+   (`~/.claude/.backups/<timestamp>/`) and tell the user the one-line restore command.
+   Never write to `~/.claude` without a snapshot.
 1. **Inventory** what this repo provides — the workflows (this `CLAUDE.md`), the
    style (`GUIDELINES.md`), the skills, the agents, and the supporting templates —
-   versus what already exists locally (`~/.claude/`).
+   versus what already exists locally (`~/.claude/`). Present the plan as
+   install / merge / skip per item and confirm before any write.
 2. **Transfer the knowledge to the user level** so it applies in every project,
    without the repo:
    - automation/workflows + these principles → merge into `~/.claude/CLAUDE.md`
@@ -60,13 +65,33 @@ was already local — so local works on its own, without the repo.
    - style → `~/.claude/GUIDELINES.md`, referenced from that memory;
    - units → `~/.claude/skills/` and `~/.claude/agents/`;
    - the templates the workflows rely on → `~/.claude/templates/`.
+   For the two prose-memory files (`~/.claude/CLAUDE.md` and `~/.claude/GUIDELINES.md`),
+   write the repo-sourced content **inside stable managed-block markers**
+   (`<!-- claude-markdowns:managed start -->` … `<!-- claude-markdowns:managed end -->`),
+   never replacing the whole file. On a repeat run: if the markers exist, replace only
+   the text between them; otherwise append a fresh block at the end — and always leave
+   the user's own text outside the markers untouched. If the user appears to have
+   hand-edited content inside a block, treat it as a conflict and confirm (Workflow D
+   stance) before overwriting.
 3. **Merge, don't clobber.** Where a unit already exists locally and differs,
    reconcile by *behavior* using Workflow **D** (duplicates), **E** (skill
    specialization), **F** (agent disambiguation). Confirm conflicts with the user.
-4. **Keep local-only items.** Do not delete anything the repo didn't create.
+4. **Keep local-only items (the firewall).** *Repo-origin* = files tracked in this
+   cloned repo; everything else in `~/.claude` is local-only and read-only to the
+   merge. On any name collision, **never overwrite blindly**: if the local unit is
+   *not* repo-origin (hand-made), stop and run Workflow **D** (ask the user) before
+   touching it; if it is repo-origin from a prior alignment, reconcile via D/E/F. A
+   unit this repo would install but that is **absent** locally is treated as an
+   intentional deletion — ask before reinstalling, never auto-restore.
 5. **Converge & report.** Local now mirrors the repo's structure and carries its
-   automation; report what was installed, merged, and skipped. The repo can then be
-   set aside until the next update.
+   automation; report what was installed, merged, and skipped, and where the snapshot
+   backup was written. The repo can then be set aside until the next update.
+
+**Re-running `merge` is idempotent.** On a repeat run, compare repo vs local by
+*behavior* (as D/E/F do): a repo unit already present and behaviorally equivalent is
+reported as *already aligned* and not re-litigated. Together with the snapshot, the
+managed blocks, and the firewall above, a second `merge` converges quietly and
+respects intentional local deletions.
 
 Workflows D/E/F are the **merge mechanism** this protocol invokes.
 
