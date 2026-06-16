@@ -144,11 +144,98 @@ function renderAnalytics(node) {
   analyticsEl.innerHTML = statCard("Skills", skills) + statCard("Agents", agents);
 }
 
+/* --- Inbox --- */
+const dropZone = document.getElementById("dropZone");
+const filePickerInput = document.getElementById("filePickerInput");
+const uploadFeedback = document.getElementById("uploadFeedback");
+const inboxContents = document.getElementById("inboxContents");
+const inboxRefreshBtn = document.getElementById("inboxRefreshBtn");
+
+function getInboxTarget() {
+  return document.querySelector('input[name="inboxTarget"]:checked')?.value || "skills";
+}
+
+function showFeedback(msg, isErr) {
+  uploadFeedback.textContent = msg;
+  uploadFeedback.className = "upload-feedback hint " + (isErr ? "err" : "ok");
+  setTimeout(() => { uploadFeedback.textContent = ""; uploadFeedback.className = "upload-feedback"; }, 4000);
+}
+
+async function getOrMkdir(parent, name) {
+  return parent.getDirectoryHandle(name, { create: true });
+}
+
+async function writeFiles(files) {
+  if (!rootHandle) { showFeedback("Open the repo folder first.", true); return; }
+  const target = getInboxTarget();
+  try {
+    const inboxDir = await getOrMkdir(rootHandle, "inbox");
+    const targetDir = await getOrMkdir(inboxDir, target);
+    const names = [];
+    for (const file of files) {
+      const fh = await targetDir.getFileHandle(file.name, { create: true });
+      const writable = await fh.createWritable();
+      await writable.write(file);
+      await writable.close();
+      names.push(file.name);
+    }
+    showFeedback("Uploaded to inbox/" + target + ": " + names.join(", "));
+    renderInbox();
+  } catch (e) {
+    showFeedback("Upload failed: " + (e.message || e), true);
+  }
+}
+
+async function renderInbox() {
+  if (!rootHandle) { inboxContents.innerHTML = '<p class="hint">Open the repo folder to see inbox contents.</p>'; return; }
+  try {
+    const inboxDir = await rootHandle.getDirectoryHandle("inbox");
+    const sections = {};
+    for (const sub of ["skills", "agents"]) {
+      sections[sub] = [];
+      try {
+        const dir = await inboxDir.getDirectoryHandle(sub);
+        for await (const [name, h] of dir.entries()) {
+          if (h.kind === "file" && !name.startsWith(".")) sections[sub].push(name);
+        }
+      } catch (e) { /* dir may not exist yet */ }
+    }
+    const total = sections.skills.length + sections.agents.length;
+    if (total === 0) { inboxContents.innerHTML = '<p class="hint ok">Inbox is empty — ready for ingestion.</p>'; return; }
+    let html = '<div class="inbox-lists">';
+    for (const [label, files] of Object.entries(sections)) {
+      if (!files.length) continue;
+      html += `<div class="inbox-group"><div class="inbox-group-label">${label} (${files.length})</div><ul class="mini">`;
+      for (const f of files.slice().sort()) html += `<li>${escapeHtml(f)}</li>`;
+      html += "</ul></div>";
+    }
+    html += "</div>";
+    inboxContents.innerHTML = html;
+  } catch (e) {
+    inboxContents.innerHTML = '<p class="hint">No <code>inbox/</code> folder found yet.</p>';
+  }
+}
+
+dropZone.addEventListener("dragover", (e) => { e.preventDefault(); dropZone.classList.add("drag-over"); });
+dropZone.addEventListener("dragleave", () => dropZone.classList.remove("drag-over"));
+dropZone.addEventListener("drop", (e) => {
+  e.preventDefault();
+  dropZone.classList.remove("drag-over");
+  const files = Array.from(e.dataTransfer.files);
+  if (files.length) writeFiles(files);
+});
+filePickerInput.addEventListener("change", () => {
+  const files = Array.from(filePickerInput.files);
+  if (files.length) { writeFiles(files); filePickerInput.value = ""; }
+});
+inboxRefreshBtn.addEventListener("click", renderInbox);
+
 /* Called by common.js when the repo opens/reconnects. */
 async function onRepoReady() {
   const wrap = await buildTree();
   renderAnalytics(repoNodeOf(wrap).node);
   loadClaude();
+  renderInbox();
 }
 
 /* init */

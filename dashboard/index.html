@@ -41,6 +41,33 @@
         </div>
       </aside>
     </section>
+
+    <section class="panel inbox-panel">
+      <div class="panel-head">
+        <h2>Inbox</h2>
+        <div class="panel-head-actions">
+          <div class="inbox-target-toggle">
+            <label class="toggle-label">
+              <input type="radio" name="inboxTarget" value="skills" checked> skills
+            </label>
+            <label class="toggle-label">
+              <input type="radio" name="inboxTarget" value="agents"> agents
+            </label>
+          </div>
+          <button id="inboxRefreshBtn" title="Refresh inbox file list">Refresh</button>
+        </div>
+      </div>
+      <div class="inbox-body">
+        <div id="dropZone" class="drop-zone">
+          <p class="drop-label">Drop <code>.md</code> files here</p>
+          <p class="drop-sub">or <label class="file-pick-label"><input type="file" id="filePickerInput" multiple accept=".md,.txt"> browse</label></p>
+        </div>
+        <div id="uploadFeedback" class="upload-feedback"></div>
+        <div id="inboxContents" class="inbox-contents">
+          <p class="hint">Open the repo folder to see inbox contents.</p>
+        </div>
+      </div>
+    </section>
   </main>
 
   <script src="common.js"></script>

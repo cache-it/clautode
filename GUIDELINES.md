@@ -28,6 +28,12 @@ date as my preferences evolve (Workflow B in `CLAUDE.md`).
 - Give each unit a few **trigger examples** — 2–3 prompts that *should* activate it and
   1–2 that should *not*. They document intent and feed the overlap/collision checks in
   Workflows E/F; they are not a guarantee the unit will fire at runtime.
+- **No source filename references.** Generated skill and agent files must never mention
+  the name of the file, draft, or document they were authored from. The content
+  describes only the theme the unit serves and how to activate it.
+- **Delete source artifacts after use.** Any reference file, draft, or raw document
+  used to create or define a unit must be deleted once the finalized output file is
+  written and verified. Never leave input artifacts alongside the output they produced.
 
 ## Skills
 
@@ -99,6 +105,7 @@ Every unit:
 - Frontmatter uses only the keys listed in that template.
 - `description` follows **Skills**/**Agents** above and trips none of the **Anti-patterns**.
 - No hardcoded secrets (`CLAUDE.md` Rules of engagement).
+- No source filename references anywhere in the file body or frontmatter (see **Cross-cutting**).
 - Exactly one catalog row in the folder's `README.md`, linking to the file.
 - Trigger examples present, or deliberately omitted.
 

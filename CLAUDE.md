@@ -44,6 +44,12 @@ When the user types **`merge`** (or runs the **`/merge`** command) — typically
 after cloning this repo — that is the signal to merge this repo's structure and
 principles into the local Claude install. Run the Alignment protocol below.
 
+### Trigger: the `refine` keyword
+
+When the user types **`refine`** (or runs the **`/refine`** command), that is the
+signal to reorganize the entire skill and agent catalog in-place. Run **Workflow J**
+below.
+
 ### Alignment protocol (repo → local)
 
 Goal: the local Claude install ends up carrying this repo's automation / management /
@@ -123,7 +129,8 @@ clautode/
 ├── GUIDELINES.md      # user preferences = single source of truth for style
 ├── README.md          # human-facing overview; points back here
 ├── .claude/commands/
-│   └── merge.md       # the `merge` slash command → runs the Alignment protocol
+│   ├── merge.md       # the `merge` slash command → runs the Alignment protocol
+│   └── refine.md      # the `refine` slash command → runs the Refine protocol (Workflow J)
 ├── templates/         # starting skeletons (format notes inline)
 │   ├── SKILL.md.template
 │   ├── agent.md.template
@@ -151,7 +158,10 @@ the by-hand path.
 3. Register it in the folder's catalog (`skills/README.md` or `agents/README.md`).
 4. Keep the structure consistent: **for skills, run Workflow E** (category
    hierarchy); **for agents, run Workflow F** (description disambiguation).
-5. Report what was created and which guidelines were applied.
+5. **Delete any reference or source files** used to define the unit (specs, drafts,
+   raw docs) once the finalized file is written and verified. Never leave input
+   artifacts alongside the output they produced.
+6. Report what was created and which guidelines were applied.
 
 ## Workflow B — Update preferences (self-update protocol)
 
@@ -294,6 +304,35 @@ When asked to ingest:
 > Safety: do not delete an inbox file until its destination file exists and the user
 > has confirmed any conflict resolution. If ingestion of an item is aborted, leave
 > its source in `inbox/`.
+
+## Workflow J — Refine the skill and agent catalog
+
+Triggered by the `refine` keyword / `/refine` command. Goal: reorganize the entire
+catalog in-place so every skill and agent is correctly placed in the hierarchy, with
+no duplicated coverage, no ambiguous routing, and no leftover source artifacts.
+
+This workflow runs Workflows E and F as a full sweep, not just on newly added units.
+
+1. **Inventory the catalog.** Read every file under `skills/` and `agents/`. Build a
+   map of what each unit does (from its `description` and trigger examples).
+2. **Run Workflow E (skill hierarchy) over all skills.** For each skill, check whether
+   it overlaps a more-general or more-specific peer. Propose refactors one skill at a
+   time — confirm before writing each change.
+3. **Run Workflow F (agent disambiguation) over all agents.** For each agent, check
+   whether its `description` competes with another's. Adjust scope boundaries across
+   all affected agents in one pass — confirm before writing.
+4. **Purge stale source files.** Scan `inbox/skills/`, `inbox/agents/`, and any
+   `references/` subdirectories for leftover input artifacts (specs, drafts, raw docs)
+   that have already produced a finalized unit. Delete each confirmed artifact after
+   the user verifies the corresponding output file exists.
+5. **Update catalogs.** Ensure `skills/README.md` and `agents/README.md` accurately
+   reflect every change made in steps 2–4.
+6. **Report.** Summarize which skills were refactored, which agents had descriptions
+   tightened, and which artifacts were deleted. Note anything left pending a user
+   decision.
+
+**Re-running `refine` is safe and idempotent:** a unit already correctly placed is
+reported as *already clean* and not touched.
 
 ## Project documentation subsystem (`projects/`)
 
